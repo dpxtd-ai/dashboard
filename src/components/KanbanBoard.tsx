@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Columns, Plus, GitPullRequest, ArrowRight, Tag, User } from 'lucide-react';
 import { KanbanCard } from '../types';
 
@@ -9,7 +9,11 @@ interface KanbanBoardProps {
 export const KanbanBoard: React.FC<KanbanBoardProps> = ({ initialCards }) => {
   const [cards, setCards] = useState<KanbanCard[]>(initialCards);
   const [newTitle, setNewTitle] = useState('');
-  const [selectedRepo, setSelectedRepo] = useState('musafir-cafe');
+  const [selectedRepo, setSelectedRepo] = useState('dashboard');
+
+  useEffect(() => {
+    setCards(initialCards);
+  }, [initialCards]);
 
   const columns: { id: KanbanCard['status']; label: string; count: number }[] = [
     { id: 'backlog', label: 'Backlog', count: cards.filter(c => c.status === 'backlog').length },

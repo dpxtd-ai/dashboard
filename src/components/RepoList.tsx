@@ -21,14 +21,18 @@ import { Repository } from '../types';
 interface RepoListProps {
   repos: Repository[];
   totalCount: number;
+  selectedRepoName?: string;
   onOpenRepo: (repo: Repository) => void;
+  onSelectRepo?: (repo: Repository) => void;
   onAddNewRepo: () => void;
 }
 
 export const RepoList: React.FC<RepoListProps> = ({
   repos,
   totalCount,
+  selectedRepoName,
   onOpenRepo,
+  onSelectRepo,
   onAddNewRepo
 }) => {
   const [filterOpen, setFilterOpen] = useState(false);
@@ -153,54 +157,89 @@ export const RepoList: React.FC<RepoListProps> = ({
             No repositories matched the selected filters.
           </div>
         ) : (
-          displayedRepos.map((repo) => (
-            <div
-              key={repo.id}
-              className="group flex flex-wrap items-center justify-between gap-4 rounded-lg border border-[#182335] bg-[#101725] px-4 py-3 transition-colors hover:border-[#283852] hover:bg-[#131d2e]"
-            >
-              {/* Left Column: Icon + Repo Name + Private/Public Badge */}
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#192437] border border-[#223149]">
-                  {getRepoIcon(repo.icon)}
-                </div>
-
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2.5">
-                    <span className="font-mono text-sm font-semibold text-slate-100 hover:text-cyan-300 transition-colors cursor-pointer" onClick={() => onOpenRepo(repo)}>
-                      {repo.name}
-                    </span>
-
-                    {/* Badge as seen in screenshot: e.g. Private in purple capsule */}
-                    <span className={`rounded px-2 py-0.5 font-mono text-[10px] font-medium tracking-wide ${
-                      repo.visibility === 'Private'
-                        ? 'bg-[#261d3b] text-[#c084fc] border border-[#3f2f5f]'
-                        : 'bg-[#132d29] text-[#34d399] border border-[#1d4c42]'
-                    }`}>
-                      {repo.visibility}
-                    </span>
+          displayedRepos.map((repo) => {
+            const isSelected = selectedRepoName === repo.name;
+            return (
+              <div
+                key={repo.id}
+                onClick={() => onSelectRepo?.(repo)}
+                className={`group flex flex-wrap items-center justify-between gap-4 rounded-lg border px-4 py-3 transition-colors cursor-pointer ${
+                  isSelected
+                    ? 'border-cyan-500/60 bg-[#122036] shadow-[0_0_15px_rgba(6,182,212,0.1)]'
+                    : 'border-[#182335] bg-[#101725] hover:border-[#283852] hover:bg-[#131d2e]'
+                }`}
+              >
+                {/* Left Column: Icon + Repo Name + Private/Public Badge */}
+                <div className="flex items-center gap-3.5">
+                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border ${
+                    isSelected ? 'bg-cyan-950/60 border-cyan-500/40 text-cyan-300' : 'bg-[#192437] border-[#223149]'
+                  }`}>
+                    {getRepoIcon(repo.icon)}
                   </div>
 
-                  {/* Secondary metadata */}
-                  <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                    <span>{repo.techStack.join(' · ')}</span>
-                    <span className="text-slate-600">·</span>
-                    <span className="font-mono text-[10px] text-slate-500">branch: {repo.primaryBranch}</span>
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className={`font-mono text-sm font-semibold transition-colors ${
+                        isSelected ? 'text-cyan-300' : 'text-slate-100 group-hover:text-cyan-300'
+                      }`}>
+                        {repo.name}
+                      </span>
+
+                      {isSelected && (
+                        <span className="rounded bg-cyan-500/20 px-1.5 py-0.5 font-mono text-[9px] font-semibold text-cyan-300 border border-cyan-500/30">
+                          Active Focus
+                        </span>
+                      )}
+
+                      {/* Badge as seen in screenshot: e.g. Private in purple capsule */}
+                      <span className={`rounded px-2 py-0.5 font-mono text-[10px] font-medium tracking-wide ${
+                        repo.visibility === 'Private'
+                          ? 'bg-[#261d3b] text-[#c084fc] border border-[#3f2f5f]'
+                          : 'bg-[#132d29] text-[#34d399] border border-[#1d4c42]'
+                      }`}>
+                        {repo.visibility}
+                      </span>
+                    </div>
+
+                    {/* Secondary metadata */}
+                    <div className="flex items-center gap-2 text-[11px] text-slate-400">
+                      <span>{repo.techStack.join(' · ')}</span>
+                      <span className="text-slate-600">·</span>
+                      <span className="font-mono text-[10px] text-slate-500">branch: {repo.primaryBranch}</span>
+                      <span className="text-slate-600">·</span>
+                      <span className="text-slate-400 text-[10px]">pushed {repo.updatedAt}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Right Column: Open Button matching screenshot */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => onOpenRepo(repo)}
-                  className="flex items-center gap-1.5 rounded-md border border-[#223149] bg-[#151f31] px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-cyan-500/40 hover:bg-[#1b273d] hover:text-cyan-300"
-                >
-                  <span>Open</span>
-                  <ExternalLink className="h-3 w-3" />
-                </button>
+                {/* Right Column: Open Button matching screenshot */}
+                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                  {repo.liveUrl && repo.liveUrl !== repo.url && (
+                    <a
+                      href={repo.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hidden sm:flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-950/20 px-2.5 py-1.5 text-xs font-mono font-medium text-emerald-300 hover:bg-emerald-900/40 transition-colors"
+                      title="Open Live Deployed Site"
+                    >
+                      <span>Live Site</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                  <a
+                    href={repo.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 rounded-md border border-[#223149] bg-[#151f31] px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-cyan-500/40 hover:bg-[#1b273d] hover:text-cyan-300"
+                    title="Open on GitHub"
+                  >
+                    <span>GitHub</span>
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
