@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Link2, 
-  Filter, 
   ExternalLink, 
   Cloud, 
   Shield, 
@@ -11,9 +10,6 @@ import {
   Database, 
   Lock, 
   Share2, 
-  Search, 
-  Plus, 
-  X,
   Code2
 } from 'lucide-react';
 import { Repository } from '../types';
@@ -24,36 +20,17 @@ interface RepoListProps {
   selectedRepoName?: string;
   onOpenRepo: (repo: Repository) => void;
   onSelectRepo?: (repo: Repository) => void;
-  onAddNewRepo: () => void;
 }
 
 export const RepoList: React.FC<RepoListProps> = ({
   repos,
-  totalCount,
   selectedRepoName,
   onOpenRepo,
-  onSelectRepo,
-  onAddNewRepo
+  onSelectRepo
 }) => {
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [visibilityFilter, setVisibilityFilter] = useState<'All' | 'Private' | 'Public'>('All');
-  const [showAll, setShowAll] = useState(false);
-
-  // Filter repos
-  const filtered = repos.filter(repo => {
-    const matchesSearch = 
-      repo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      repo.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      repo.techStack.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    const matchesVis = visibilityFilter === 'All' || repo.visibility === visibilityFilter;
-    return matchesSearch && matchesVis;
-  });
-
-  // By default display 5 as shown in screenshot ("Showing 5 of 18 repos"), or all if toggled
-  const displayLimit = showAll ? filtered.length : 5;
-  const displayedRepos = filtered.slice(0, displayLimit);
+  // Exclude "dashboard" from the Working project url list as requested
+  // Any repo added to the account other than "dashboard" will show here
+  const displayedRepos = repos.filter(repo => repo.name.toLowerCase() !== 'dashboard');
 
   const getRepoIcon = (iconName: string) => {
     switch (iconName) {
@@ -71,7 +48,7 @@ export const RepoList: React.FC<RepoListProps> = ({
 
   return (
     <div className="rounded-xl border border-[#1b2537] bg-[#0d131f] p-5 shadow-lg">
-      {/* Header matching screenshot exactly */}
+      {/* Header without Filter and Add Repo buttons */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1b2537] pb-4">
         <div className="flex items-center gap-2">
           <Link2 className="h-4 w-4 text-cyan-400" />
@@ -82,83 +59,22 @@ export const RepoList: React.FC<RepoListProps> = ({
 
         <div className="flex items-center gap-3">
           <span className="text-xs font-mono text-slate-400">
-            Showing {displayedRepos.length} of {totalCount} repos
+            Showing {displayedRepos.length} of {displayedRepos.length} {displayedRepos.length === 1 ? 'repo' : 'repos'}
           </span>
-
-          <button
-            onClick={() => setFilterOpen(!filterOpen)}
-            className={`flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs font-medium transition-colors ${
-              filterOpen || searchQuery || visibilityFilter !== 'All'
-                ? 'border-cyan-500/40 bg-cyan-950/30 text-cyan-300'
-                : 'border-[#223147] bg-[#121927] text-slate-300 hover:bg-[#1a2538] hover:text-white'
-            }`}
-          >
-            <Filter className="h-3 w-3" />
-            <span>Filter</span>
-          </button>
-
-          <button
-            onClick={onAddNewRepo}
-            className="flex items-center gap-1 rounded-md bg-[#192438] px-2.5 py-1 text-xs font-medium text-slate-300 hover:bg-[#23334e] hover:text-white transition-colors border border-[#263750]"
-            title="Track new repository"
-          >
-            <Plus className="h-3 w-3" />
-            <span className="hidden sm:inline">Add Repo</span>
-          </button>
         </div>
       </div>
 
-      {/* Filter / Search Expansion Tray */}
-      {filterOpen && (
-        <div className="mt-3 rounded-lg border border-[#223147] bg-[#0b0f17] p-3 animate-in fade-in duration-150">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-500" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by repo name, tech stack, or description..."
-                className="w-full rounded-md border border-[#1e2a3c] bg-[#131b28] py-1.5 pl-8 pr-3 text-xs text-slate-200 placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-white"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              )}
-            </div>
-
-            <div className="flex items-center gap-1 bg-[#131b28] p-1 rounded-md border border-[#1e2a3c]">
-              {(['All', 'Private', 'Public'] as const).map((vis) => (
-                <button
-                  key={vis}
-                  onClick={() => setVisibilityFilter(vis)}
-                  className={`rounded px-2.5 py-1 text-[11px] font-medium transition-colors ${
-                    visibilityFilter === vis
-                      ? 'bg-cyan-500/20 text-cyan-300 font-semibold'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  {vis}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Repositories Rows List matching screenshot */}
+      {/* Repositories Rows List */}
       <div className="mt-4 space-y-2.5">
         {displayedRepos.length === 0 ? (
-          <div className="py-8 text-center text-xs text-slate-500">
-            No repositories matched the selected filters.
+          <div className="py-8 text-center text-xs text-slate-500 font-mono">
+            No active project repositories found. Any newly created repository on your GitHub account will automatically appear here.
           </div>
         ) : (
           displayedRepos.map((repo) => {
             const isSelected = selectedRepoName === repo.name;
+            const liveUrl = repo.liveUrl || (repo.url ? `https://dpxtd-ai.github.io/${repo.name}/` : '');
+
             return (
               <div
                 key={repo.id}
@@ -169,7 +85,7 @@ export const RepoList: React.FC<RepoListProps> = ({
                     : 'border-[#182335] bg-[#101725] hover:border-[#283852] hover:bg-[#131d2e]'
                 }`}
               >
-                {/* Left Column: Icon + Repo Name + Private/Public Badge */}
+                {/* Left Column: Icon + Repo Name + Public Badge */}
                 <div className="flex items-center gap-3.5">
                   <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border ${
                     isSelected ? 'bg-cyan-950/60 border-cyan-500/40 text-cyan-300' : 'bg-[#192437] border-[#223149]'
@@ -185,13 +101,7 @@ export const RepoList: React.FC<RepoListProps> = ({
                         {repo.name}
                       </span>
 
-                      {isSelected && (
-                        <span className="rounded bg-cyan-500/20 px-1.5 py-0.5 font-mono text-[9px] font-semibold text-cyan-300 border border-cyan-500/30">
-                          Active Focus
-                        </span>
-                      )}
-
-                      {/* Badge as seen in screenshot: e.g. Private in purple capsule */}
+                      {/* Badge: Public/Private */}
                       <span className={`rounded px-2 py-0.5 font-mono text-[10px] font-medium tracking-wide ${
                         repo.visibility === 'Private'
                           ? 'bg-[#261d3b] text-[#c084fc] border border-[#3f2f5f]'
@@ -212,48 +122,26 @@ export const RepoList: React.FC<RepoListProps> = ({
                   </div>
                 </div>
 
-                {/* Right Column: Open Button matching screenshot */}
+                {/* Right Column: Live Site link button only (GitHub link removed as requested) */}
                 <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                  {repo.liveUrl && repo.liveUrl !== repo.url && (
+                  {liveUrl && (
                     <a
-                      href={repo.liveUrl}
+                      href={liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hidden sm:flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-950/20 px-2.5 py-1.5 text-xs font-mono font-medium text-emerald-300 hover:bg-emerald-900/40 transition-colors"
+                      className="flex items-center gap-1.5 rounded-md border border-emerald-500/40 bg-emerald-950/30 px-3 py-1.5 text-xs font-mono font-medium text-emerald-300 hover:bg-emerald-900/50 hover:text-emerald-100 transition-colors"
                       title="Open Live Deployed Site"
                     >
                       <span>Live Site</span>
                       <ExternalLink className="h-3 w-3" />
                     </a>
                   )}
-                  <a
-                    href={repo.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 rounded-md border border-[#223149] bg-[#151f31] px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-cyan-500/40 hover:bg-[#1b273d] hover:text-cyan-300"
-                    title="Open on GitHub"
-                  >
-                    <span>GitHub</span>
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
                 </div>
               </div>
             );
           })
         )}
       </div>
-
-      {/* Show more toggle */}
-      {filtered.length > 5 && (
-        <div className="mt-3 flex justify-center border-t border-[#1b2537] pt-3">
-          <button
-            onClick={() => setShowAll(!showAll)}
-            className="font-mono text-xs text-cyan-400 hover:text-cyan-300 transition-colors py-1 px-3 rounded hover:bg-[#141d2d]"
-          >
-            {showAll ? 'Show less (5)' : `View all ${filtered.length} repositories →`}
-          </button>
-        </div>
-      )}
     </div>
   );
 };
