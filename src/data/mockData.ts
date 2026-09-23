@@ -1,0 +1,503 @@
+import { Repository, DashboardStats, LatestCommit, KanbanCard, CIPipeline, UrlEndpoint } from '../types';
+
+export const initialStats: DashboardStats = {
+  totalCommits: 1428,
+  sprintCommits: 42,
+  sprintName: "Sprint 34",
+  primaryBranch: "main",
+  velocityAvg: "+12.4% avg",
+  activePRs: 12,
+  activePipelines: 8,
+  passingPipelines: 8,
+  totalLinesAdded: 284,
+  totalLinesDeleted: 46,
+  filesChanged: 8,
+  dailyVelocity: [
+    { day: "Day 1", date: "Sep 10", commits: 14 },
+    { day: "Day 2", date: "Sep 11", commits: 18 },
+    { day: "Day 3", date: "Sep 12", commits: 22 },
+    { day: "Day 4", date: "Sep 13", commits: 16 },
+    { day: "Day 5", date: "Sep 14", commits: 19 },
+    { day: "Day 6", date: "Sep 15", commits: 26 },
+    { day: "Day 7", date: "Sep 16", commits: 24 },
+    { day: "Day 8", date: "Sep 17", commits: 20 },
+    { day: "Day 9", date: "Sep 18", commits: 29 },
+    { day: "Day 10", date: "Sep 19", commits: 31 },
+    { day: "Day 11", date: "Sep 20", commits: 28 },
+    { day: "Day 12", date: "Sep 21", commits: 34 },
+    { day: "Day 13", date: "Sep 22", commits: 38 },
+    { day: "Day 14", date: "Sep 23", commits: 42, current: true }
+  ]
+};
+
+export const initialLatestCommit: LatestCommit = {
+  hash: "9f8e21a",
+  fullHash: "9f8e21a8d05e34b901fc349cb112048f029c9103",
+  message: "feat: implement high-density terminal metrics & latency probe (#521)",
+  branch: "acme/web-app:main",
+  syncMethod: "GitHub Webhook",
+  timeAgo: "18 mins ago",
+  timestamp: "Today at 14:32:08 UTC",
+  author: {
+    name: "Elena Rostova",
+    email: "elena@acme.corp",
+    avatar: "/src/assets/images/avatar_elena_rostova_1790176238815.jpg",
+    role: "Staff Platform Engineer"
+  },
+  stats: {
+    additions: 284,
+    deletions: 46,
+    filesChanged: 8
+  },
+  changedFiles: [
+    { name: "src/telemetry/latency_probe.py", additions: 94, deletions: 12, status: "modified" },
+    { name: "src/metrics/terminal_counter.py", additions: 72, deletions: 8, status: "modified" },
+    { name: "src/api/webhook_receiver.py", additions: 48, deletions: 14, status: "modified" },
+    { name: "src/analytics/velocity_engine.py", additions: 35, deletions: 2, status: "added" },
+    { name: "tests/test_latency_probe.py", additions: 25, deletions: 4, status: "modified" },
+    { name: "config/production_pipeline.yaml", additions: 10, deletions: 6, status: "modified" }
+  ]
+};
+
+export const initialRepos: Repository[] = [
+  {
+    id: "repo-1",
+    name: "musafir-cafe",
+    visibility: "Private",
+    icon: "cloud",
+    description: "Full-stack reservation, order dispatch, and payment gateway engine with Python FastAPI backend.",
+    primaryBranch: "main",
+    updatedAt: "12 mins ago",
+    url: "https://github.com/dnyanchand/musafir-cafe",
+    liveUrl: "https://musafir-cafe-prod.internal.app",
+    techStack: ["Python 3.10", "FastAPI", "PostgreSQL", "Docker"],
+    pipelineStatus: "passing",
+    commitsCount: 248,
+    openPRs: 2
+  },
+  {
+    id: "repo-2",
+    name: "email-automate",
+    visibility: "Private",
+    icon: "shield",
+    description: "Asynchronous transactional mail dispatch system with delivery tracking and Celery worker mesh.",
+    primaryBranch: "release-v2",
+    updatedAt: "45 mins ago",
+    url: "https://github.com/dnyanchand/email-automate",
+    liveUrl: "https://email-dispatch.internal.app",
+    techStack: ["Python 3.10", "Celery", "Redis", "RabbitMQ"],
+    pipelineStatus: "passing",
+    commitsCount: 184,
+    openPRs: 1
+  },
+  {
+    id: "repo-3",
+    name: "ai-latency-probe",
+    visibility: "Public",
+    icon: "activity",
+    description: "Sub-millisecond distributed network latency and throughput benchmarking daemon.",
+    primaryBranch: "main",
+    updatedAt: "3 hours ago",
+    url: "https://github.com/dnyanchand/ai-latency-probe",
+    liveUrl: "https://probe.network.internal",
+    techStack: ["Python 3.10", "AsyncIO", "Prometheus"],
+    pipelineStatus: "passing",
+    commitsCount: 312,
+    openPRs: 3
+  },
+  {
+    id: "repo-4",
+    name: "acme-web-hud",
+    visibility: "Private",
+    icon: "terminal",
+    description: "Terminal developer heads-up-display frontend with real-time WebSocket state streaming.",
+    primaryBranch: "main",
+    updatedAt: "18 mins ago",
+    url: "https://github.com/dnyanchand/acme-web-hud",
+    liveUrl: "https://repohub-hud.internal.app",
+    techStack: ["TypeScript", "Python Bridge", "TailwindCSS"],
+    pipelineStatus: "passing",
+    commitsCount: 512,
+    openPRs: 4
+  },
+  {
+    id: "repo-5",
+    name: "terminal-metrics-core",
+    visibility: "Private",
+    icon: "cpu",
+    description: "High-throughput log ingest and aggregate metrics counter service for distributed microservices.",
+    primaryBranch: "main",
+    updatedAt: "5 hours ago",
+    url: "https://github.com/dnyanchand/terminal-metrics-core",
+    liveUrl: "https://metrics.cluster.internal",
+    techStack: ["Python 3.10", "NumPy", "gRPC"],
+    pipelineStatus: "passing",
+    commitsCount: 172,
+    openPRs: 2
+  },
+  {
+    id: "repo-6",
+    name: "micro-auth-service",
+    visibility: "Private",
+    icon: "lock",
+    description: "OAuth2.0 / OIDC identity provider and JWT rotation service for cloud microservices.",
+    primaryBranch: "master",
+    updatedAt: "1 day ago",
+    url: "https://github.com/dnyanchand/micro-auth-service",
+    liveUrl: "https://auth.internal.app",
+    techStack: ["Python 3.10", "Cryptography", "FastAPI"],
+    pipelineStatus: "passing",
+    commitsCount: 94,
+    openPRs: 0
+  },
+  {
+    id: "repo-7",
+    name: "db-migration-runner",
+    visibility: "Public",
+    icon: "database",
+    description: "Zero-downtime database migration tool with rollback safety guards and schema diffing.",
+    primaryBranch: "main",
+    updatedAt: "2 days ago",
+    url: "https://github.com/dnyanchand/db-migration-runner",
+    liveUrl: "https://migrations.internal.app",
+    techStack: ["Python 3.10", "Alembic", "SQLAlchemy"],
+    pipelineStatus: "passing",
+    commitsCount: 140,
+    openPRs: 1
+  },
+  {
+    id: "repo-8",
+    name: "webhook-router",
+    visibility: "Private",
+    icon: "share2",
+    description: "High-reliability webhook dispatch multiplexer with exponential backoff retry queue.",
+    primaryBranch: "main",
+    updatedAt: "3 days ago",
+    url: "https://github.com/dnyanchand/webhook-router",
+    liveUrl: "https://hooks.internal.app",
+    techStack: ["Python 3.10", "AioHttp", "Redis"],
+    pipelineStatus: "passing",
+    commitsCount: 88,
+    openPRs: 0
+  },
+  {
+    id: "repo-9",
+    name: "cluster-scaler-daemon",
+    visibility: "Private",
+    icon: "cpu",
+    description: "Automated Kubernetes pod horizontal autoscaling daemon based on queue latency.",
+    primaryBranch: "main",
+    updatedAt: "4 days ago",
+    url: "https://github.com/dnyanchand/cluster-scaler-daemon",
+    liveUrl: "https://scaler.k8s.internal",
+    techStack: ["Python 3.10", "Kubernetes Client"],
+    pipelineStatus: "passing",
+    commitsCount: 64,
+    openPRs: 1
+  },
+  {
+    id: "repo-10",
+    name: "payment-stripe-adapter",
+    visibility: "Private",
+    icon: "shield",
+    description: "PCI-DSS compliant idempotent Stripe checkout & webhook signature verification adapter.",
+    primaryBranch: "main",
+    updatedAt: "4 days ago",
+    url: "https://github.com/dnyanchand/payment-stripe-adapter",
+    liveUrl: "https://pay.musafir.internal",
+    techStack: ["Python 3.10", "Stripe API", "FastAPI"],
+    pipelineStatus: "passing",
+    commitsCount: 78,
+    openPRs: 0
+  },
+  {
+    id: "repo-11",
+    name: "pdf-invoice-generator",
+    visibility: "Public",
+    icon: "terminal",
+    description: "High-speed headless PDF invoice rendering service with QR validation.",
+    primaryBranch: "main",
+    updatedAt: "5 days ago",
+    url: "https://github.com/dnyanchand/pdf-invoice-generator",
+    liveUrl: "https://invoicing.musafir.internal",
+    techStack: ["Python 3.10", "WeasyPrint"],
+    pipelineStatus: "passing",
+    commitsCount: 52,
+    openPRs: 0
+  },
+  {
+    id: "repo-12",
+    name: "geo-location-resolver",
+    visibility: "Private",
+    icon: "cloud",
+    description: "In-memory MaxMind GeoIP2 country and ISP lookup service for access control.",
+    primaryBranch: "main",
+    updatedAt: "1 week ago",
+    url: "https://github.com/dnyanchand/geo-location-resolver",
+    liveUrl: "https://geoip.internal.app",
+    techStack: ["Python 3.10", "GeoIP2"],
+    pipelineStatus: "passing",
+    commitsCount: 39,
+    openPRs: 0
+  },
+  {
+    id: "repo-13",
+    name: "customer-feedback-bot",
+    visibility: "Public",
+    icon: "activity",
+    description: "Automated Slack & Telegram incident summary and customer feedback triage.",
+    primaryBranch: "main",
+    updatedAt: "1 week ago",
+    url: "https://github.com/dnyanchand/customer-feedback-bot",
+    liveUrl: "https://slackbot.internal.app",
+    techStack: ["Python 3.10", "Slack-Bolt"],
+    pipelineStatus: "passing",
+    commitsCount: 44,
+    openPRs: 1
+  },
+  {
+    id: "repo-14",
+    name: "s3-backup-snapshotter",
+    visibility: "Private",
+    icon: "database",
+    description: "Automated daily encrypted RDS PostgreSQL backup to multi-region AWS S3 buckets.",
+    primaryBranch: "main",
+    updatedAt: "1 week ago",
+    url: "https://github.com/dnyanchand/s3-backup-snapshotter",
+    liveUrl: "https://backup.internal.app",
+    techStack: ["Python 3.10", "Boto3"],
+    pipelineStatus: "passing",
+    commitsCount: 61,
+    openPRs: 0
+  },
+  {
+    id: "repo-15",
+    name: "rate-limiter-gateway",
+    visibility: "Private",
+    icon: "shield",
+    description: "Distributed token bucket rate limiting proxy running at the network perimeter.",
+    primaryBranch: "main",
+    updatedAt: "2 weeks ago",
+    url: "https://github.com/dnyanchand/rate-limiter-gateway",
+    liveUrl: "https://limiter.internal.app",
+    techStack: ["Python 3.10", "Redis Lua"],
+    pipelineStatus: "passing",
+    commitsCount: 82,
+    openPRs: 0
+  },
+  {
+    id: "repo-16",
+    name: "graphql-federation-hub",
+    visibility: "Private",
+    icon: "share2",
+    description: "Unified GraphQL gateway federating microservices across ordering and catalog domains.",
+    primaryBranch: "main",
+    updatedAt: "2 weeks ago",
+    url: "https://github.com/dnyanchand/graphql-federation-hub",
+    liveUrl: "https://graphql.musafir.internal",
+    techStack: ["Python 3.10", "Strawberry GraphQL"],
+    pipelineStatus: "passing",
+    commitsCount: 110,
+    openPRs: 2
+  },
+  {
+    id: "repo-17",
+    name: "iot-kitchen-display",
+    visibility: "Private",
+    icon: "terminal",
+    description: "MQTT kitchen order tickets terminal software for restaurant hardware tablets.",
+    primaryBranch: "main",
+    updatedAt: "3 weeks ago",
+    url: "https://github.com/dnyanchand/iot-kitchen-display",
+    liveUrl: "https://kds.musafir.internal",
+    techStack: ["Python 3.10", "MQTT", "Paho"],
+    pipelineStatus: "passing",
+    commitsCount: 95,
+    openPRs: 0
+  },
+  {
+    id: "repo-18",
+    name: "security-audit-scanner",
+    visibility: "Private",
+    icon: "lock",
+    description: "Scheduled dependency CVE auditing, secret scanning, and automated fix PR generator.",
+    primaryBranch: "main",
+    updatedAt: "3 weeks ago",
+    url: "https://github.com/dnyanchand/security-audit-scanner",
+    liveUrl: "https://security.internal.app",
+    techStack: ["Python 3.10", "Bandit", "Safety"],
+    pipelineStatus: "passing",
+    commitsCount: 67,
+    openPRs: 1
+  }
+];
+
+export const initialKanbanCards: KanbanCard[] = [
+  {
+    id: "kan-1",
+    title: "Implement sub-millisecond latency probe for gRPC stream",
+    repo: "musafir-cafe",
+    prNumber: 521,
+    assignee: "Elena Rostova",
+    priority: "high",
+    tags: ["python", "telemetry"],
+    status: "review"
+  },
+  {
+    id: "kan-2",
+    title: "Migrate Celery worker tasks to Redis 7 async pipeline",
+    repo: "email-automate",
+    prNumber: 184,
+    assignee: "Dnyanchand",
+    priority: "high",
+    tags: ["infra", "celery"],
+    status: "in_progress"
+  },
+  {
+    id: "kan-3",
+    title: "Add Prometheus histogram for webhook delivery latency",
+    repo: "ai-latency-probe",
+    prNumber: 309,
+    assignee: "Alex Chen",
+    priority: "medium",
+    tags: ["metrics", "prometheus"],
+    status: "review"
+  },
+  {
+    id: "kan-4",
+    title: "Setup zero-downtime PostgreSQL table partitioning",
+    repo: "db-migration-runner",
+    prNumber: 142,
+    assignee: "Elena Rostova",
+    priority: "medium",
+    tags: ["database", "sql"],
+    status: "testing"
+  },
+  {
+    id: "kan-5",
+    title: "Configure token bucket burst limit in rate limiter",
+    repo: "rate-limiter-gateway",
+    prNumber: 88,
+    assignee: "Dnyanchand",
+    priority: "low",
+    tags: ["security"],
+    status: "done"
+  },
+  {
+    id: "kan-6",
+    title: "Upgrade Python base container image to 3.10-slim",
+    repo: "musafir-cafe",
+    assignee: "DevOps Bot",
+    priority: "low",
+    tags: ["docker"],
+    status: "backlog"
+  }
+];
+
+export const initialCIPipelines: CIPipeline[] = [
+  {
+    id: "pipe-1",
+    title: "PR #521: feat: implement high-density terminal metrics & latency probe",
+    repo: "acme/web-app",
+    prNumber: 521,
+    author: "Elena Rostova",
+    branch: "main",
+    status: "success",
+    testsCount: 48,
+    duration: "1m 42s",
+    updatedAt: "18 mins ago",
+    pythonVersion: "Python 3.10.12"
+  },
+  {
+    id: "pipe-2",
+    title: "PR #184: refactor: asynchronous mail dispatch worker pool",
+    repo: "dnyanchand/email-automate",
+    prNumber: 184,
+    author: "Dnyanchand",
+    branch: "release-v2",
+    status: "success",
+    testsCount: 32,
+    duration: "2m 10s",
+    updatedAt: "45 mins ago",
+    pythonVersion: "Python 3.10.12"
+  },
+  {
+    id: "pipe-3",
+    title: "PR #312: chore: update Prometheus metrics exporter schema",
+    repo: "dnyanchand/ai-latency-probe",
+    prNumber: 312,
+    author: "Alex Chen",
+    branch: "main",
+    status: "running",
+    testsCount: 24,
+    duration: "45s",
+    updatedAt: "Just now",
+    pythonVersion: "Python 3.10.12"
+  },
+  {
+    id: "pipe-4",
+    title: "PR #77: fix: Stripe idempotent charge retry backoff",
+    repo: "dnyanchand/payment-stripe-adapter",
+    prNumber: 77,
+    author: "Priya Sharma",
+    branch: "main",
+    status: "success",
+    testsCount: 19,
+    duration: "1m 15s",
+    updatedAt: "2 hours ago",
+    pythonVersion: "Python 3.10.12"
+  }
+];
+
+export const initialUrlEndpoints: UrlEndpoint[] = [
+  {
+    id: "url-1",
+    title: "Musafir Cafe Web Platform",
+    repo: "musafir-cafe",
+    environment: "Production",
+    url: "https://musafir-cafe.internal.app",
+    status: "200 OK",
+    latencyMs: 24,
+    lastChecked: "Just now"
+  },
+  {
+    id: "url-2",
+    title: "Email Dispatch Celery Mesh API",
+    repo: "email-automate",
+    environment: "Production",
+    url: "https://email-dispatch.internal.app/health",
+    status: "200 OK",
+    latencyMs: 18,
+    lastChecked: "1 min ago"
+  },
+  {
+    id: "url-3",
+    title: "AI Latency Probe Metric Streamer",
+    repo: "ai-latency-probe",
+    environment: "Production",
+    url: "https://probe.network.internal/metrics",
+    status: "200 OK",
+    latencyMs: 8,
+    lastChecked: "30s ago"
+  },
+  {
+    id: "url-4",
+    title: "GitHub Webhook Live Listener",
+    repo: "webhook-router",
+    environment: "Webhook",
+    url: "https://repohub-hud.internal.app/api/webhook/simulate",
+    status: "200 OK",
+    latencyMs: 12,
+    lastChecked: "Just now"
+  },
+  {
+    id: "url-5",
+    title: "FastAPI Interactive Swagger Docs",
+    repo: "musafir-cafe",
+    environment: "API Docs",
+    url: "https://musafir-cafe.internal.app/docs",
+    status: "200 OK",
+    latencyMs: 32,
+    lastChecked: "5 mins ago"
+  }
+];

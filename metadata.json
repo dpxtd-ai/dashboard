@@ -1,0 +1,6 @@
+{
+  "name": "RepoHub Terminal HUD",
+  "description": "High-density developer terminal HUD and GitHub repository command center with live metrics, commit velocity, unified kanban, and Python analytics engine.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
